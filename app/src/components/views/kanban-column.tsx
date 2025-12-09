@@ -10,6 +10,7 @@ interface KanbanColumnProps {
   color: string;
   count: number;
   children: ReactNode;
+  isDoubleWidth?: boolean;
 }
 
 export function KanbanColumn({
@@ -18,6 +19,7 @@ export function KanbanColumn({
   color,
   count,
   children,
+  isDoubleWidth = false,
 }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id });
 
@@ -25,7 +27,8 @@ export function KanbanColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        "flex flex-col w-72 h-full rounded-lg bg-zinc-900/50 backdrop-blur-sm border border-white/5 transition-colors",
+        "flex flex-col h-full rounded-lg bg-zinc-900/50 backdrop-blur-sm border border-white/5 transition-colors",
+        isDoubleWidth ? "w-[37rem]" : "w-72",
         isOver && "bg-zinc-800/50"
       )}
       data-testid={`kanban-column-${id}`}
@@ -40,7 +43,16 @@ export function KanbanColumn({
       </div>
 
       {/* Column Content */}
-      <div className="flex-1 overflow-y-auto p-2 space-y-2">{children}</div>
+      <div
+        className={cn(
+          "flex-1 overflow-y-auto p-2",
+          isDoubleWidth
+            ? "columns-2 gap-2 [&>*]:break-inside-avoid [&>*]:mb-2"
+            : "space-y-2"
+        )}
+      >
+        {children}
+      </div>
     </div>
   );
 }

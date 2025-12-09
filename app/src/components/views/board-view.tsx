@@ -511,7 +511,15 @@ export function BoardView() {
   };
 
   const getColumnFeatures = (columnId: ColumnId) => {
-    return features.filter((f) => f.status === columnId);
+    return features.filter((f) => {
+      // If feature has a running agent, always show it in "in_progress"
+      const isRunning = runningAutoTasks.includes(f.id);
+      if (isRunning) {
+        return columnId === "in_progress";
+      }
+      // Otherwise, use the feature's status
+      return f.status === columnId;
+    });
   };
 
   const handleViewOutput = (feature: Feature) => {
@@ -682,6 +690,7 @@ export function BoardView() {
                   title={column.title}
                   color={column.color}
                   count={columnFeatures.length}
+                  isDoubleWidth={column.id === "in_progress"}
                 >
                   <SortableContext
                     items={columnFeatures.map((f) => f.id)}
